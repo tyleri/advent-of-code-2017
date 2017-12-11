@@ -1,5 +1,7 @@
+import java.util.LinkedList
+
 fun main(args: Array<String>) {
-    val input = readLine() ?: throw IllegalArgumentException("Wrong arguments")
+    val input = readLine() ?: throw IllegalArgumentException("No input")
 
     println("Part 1: ${part1(input)}")
 }
@@ -14,7 +16,7 @@ enum class Token {
 }
 
 fun part1(input: String) : Int {
-    var queue = listOf<Bunch>()
+    var queue = LinkedList<Bunch>()
     var totalScore = 0
 
     fun parseChar(char: Char) : Token = when (char) {
@@ -26,38 +28,37 @@ fun part1(input: String) : Int {
         else -> Token.OTHER
     }
 
-    fun checkQueue(char: Char) {
-        val lastElt = queue.lastOrNull()
-        when (lastElt) {
-            Cancel -> queue = queue.dropLast(1)
+    fun processChar(char: Char) {
+        val topElt = queue.peek()
+        when (topElt) {
+            Cancel  -> queue.pop()
             Garbage -> when (parseChar(char)) {
-                Token.CANCEL -> queue = queue.plus( Cancel )
-                Token.CLOSE_GARBAGE -> queue = queue.dropLast(1)
-                else -> {}
+                Token.CANCEL        -> queue.push( Cancel )
+                Token.CLOSE_GARBAGE -> queue.pop()
+                else                -> {}
             }
             is Group -> when (parseChar(char)) {
-                Token.CANCEL -> queue = queue.plus( Cancel )
-                Token.CLOSE_GROUP -> {
-                    totalScore += lastElt.score
-                    queue = queue.dropLast(1)
+                Token.CANCEL        -> queue.push( Cancel )
+                Token.CLOSE_GROUP   -> {
+                    totalScore += topElt.score
+                    queue.pop()
                 }
-                Token.OPEN_GROUP -> queue = queue.plus( Group(lastElt.score + 1) )
-                Token.OPEN_GARBAGE -> queue = queue.plus( Garbage )
+                Token.OPEN_GROUP    -> queue.push( Group(topElt.score + 1) )
+                Token.OPEN_GARBAGE  -> queue.push( Garbage )
                 else -> {}
             }
             null -> when (parseChar(char)) {
-                Token.CANCEL -> queue = queue.plus( Cancel )
-                Token.OPEN_GROUP -> queue = queue.plus( Group(1) )
-                Token.OPEN_GARBAGE -> queue = queue.plus( Garbage )
+                Token.CANCEL        -> queue.push( Cancel )
+                Token.OPEN_GROUP    -> queue.push( Group(1) )
+                Token.OPEN_GARBAGE  -> queue.push( Garbage )
                 else -> {}
             }
         }
     }
 
     for (char in input) {
-        checkQueue(char)
+        processChar(char)
     }
 
-    // println(queue)
     return totalScore
 }
