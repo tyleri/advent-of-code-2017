@@ -1,3 +1,5 @@
+package night11
+
 fun main(args: Array<String>) {
     val input = readLine() ?: throw IllegalArgumentException("No input")
 

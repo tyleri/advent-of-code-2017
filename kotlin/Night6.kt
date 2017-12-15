@@ -1,3 +1,5 @@
+package night6
+
 fun main(args : Array<String>) {
     val input = readLine()
 

@@ -1,3 +1,5 @@
+package night8
+
 fun main(args: Array<String>) {
     val input = ArrayList<String>()
 

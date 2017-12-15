@@ -1,8 +1,10 @@
+package night3
+
 fun main(args : Array<String>) {
     val input = readLine()?.toInt() ?: throw IllegalArgumentException("No input")
 
     println("Part 1: ${part1(input)}")
-    println("Part 2: ${part2(input)}")
+    // println("Part 2: ${part2(input)}")
 }
 
 fun part1(input : Int) : Int {
