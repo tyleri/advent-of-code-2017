@@ -61,3 +61,30 @@ fun knotHash(input: String) : String {
 
     return denseHash.map(::byteToHexStr).joinToString(separator="")
 }
+
+class UnionFind<T>(elements: Iterable<T>) {
+    val mapping = mutableMapOf( *elements.map {Pair(it, it)}.toTypedArray() )
+
+    fun find(element: T) : T {
+        var curr = element
+
+        while (true) {
+            val parent = mapping.get(curr) ?: throw IllegalArgumentException("Invalid mapping for $curr")
+
+            if (curr == parent) {
+                return curr
+            } else {
+                curr = parent
+            }
+        }
+    }
+
+    fun union(elt1: T, elt2: T) {
+        val parent1 = find(elt1)
+        val parent2 = find(elt2)
+
+        if (parent1 != parent2) {
+            mapping.put(parent2, parent1)
+        }
+    }
+}
