@@ -1,5 +1,3 @@
-package night3
-
 fun main(args : Array<String>) {
     val input = readLine()?.toInt() ?: throw IllegalArgumentException("No input")
 

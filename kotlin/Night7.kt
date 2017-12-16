@@ -1,5 +1,3 @@
-package night7
-
 fun main(args : Array<String>) {
     var input : ArrayList<String> = ArrayList<String>()
 
