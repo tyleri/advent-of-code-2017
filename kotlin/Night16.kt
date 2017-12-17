@@ -2,6 +2,7 @@ fun main(args: Array<String>) {
     val input = readLine() ?: throw IllegalArgumentException("No input")
 
     println("Part 1: ${part1(input)}")
+    println("Part 2: ${part2(input)}")
 }
 
 sealed class DanceMove
@@ -21,26 +22,53 @@ fun parseDanceMove(input: String) : DanceMove {
     }
 }
 
-fun part1(input: String) : String {
-    val danceMoves = input.split(",").map(::parseDanceMove)
-    var progOrder = Array(16, {'a' + it})
+fun goDance(arr: Array<Char>, danceMovesStr: String) {
+    val danceMoves = danceMovesStr.split(",").map(::parseDanceMove)
 
     for (move in danceMoves) {
         when (move) {
-            is Spin -> progOrder = ( progOrder.takeLast(move.amount).plus(progOrder.dropLast(move.amount)) ).toTypedArray()
+            is Spin -> {
+                arr.takeLast(move.amount).plus(arr.dropLast(move.amount)).forEachIndexed {
+                    index, elt -> arr[index] = elt
+                }
+            }
             is Exchange -> {
-                val tmp = progOrder[move.pos1]
-                progOrder[move.pos1] = progOrder[move.pos2]
-                progOrder[move.pos2] = tmp
+                val tmp = arr[move.pos1]
+                arr[move.pos1] = arr[move.pos2]
+                arr[move.pos2] = tmp
             }
             is Partner -> {
-                val pos1 = progOrder.indexOf(move.prog1)
-                val pos2 = progOrder.indexOf(move.prog2)
-                val tmp = progOrder[pos1]
-                progOrder[pos1] = progOrder[pos2]
-                progOrder[pos2] = tmp
+                val pos1 = arr.indexOf(move.prog1)
+                val pos2 = arr.indexOf(move.prog2)
+                val tmp = arr[pos1]
+                arr[pos1] = arr[pos2]
+                arr[pos2] = tmp
             }
         }
+    }
+}
+
+fun part1(input: String) : String {
+    var progOrder = Array(16, {'a' + it})
+
+    goDance(progOrder, input)
+    return progOrder.joinToString(separator="")
+}
+
+fun part2(input: String) : String {
+    var progOrder = Array(16, {'a' + it})
+    var mapping = mutableMapOf(progOrder.joinToString(separator="") to 1_000_000_000)
+
+    var i = 1_000_000_000
+    while (i > 0) {
+        i--
+
+        goDance(progOrder, input)
+        val joined = progOrder.joinToString(separator="")
+        mapping.get(joined)?.let {
+            i %= (it - i)
+        }
+        mapping.put(joined, i)
     }
 
     return progOrder.joinToString(separator="")
