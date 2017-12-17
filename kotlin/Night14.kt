@@ -11,12 +11,7 @@ fun main(args: Array<String>) {
 fun hexCountOnes(char: Char) : Int {
     var hexNum = when (char) {
         in '0'..'9' -> char - '0'
-        'a' -> 10
-        'b' -> 11
-        'c' -> 12
-        'd' -> 13
-        'e' -> 14
-        'f' -> 15
+        in 'a'..'f' -> 10 + (char - 'a')
         else -> throw IllegalArgumentException("Invalid hex character")
     }
 
@@ -69,7 +64,6 @@ fun part2(input: String) : Int {
     // add indices to union find
     var usedList = mutableListOf<Pair<Int, Int>>()
     for (i in diskArr.indices) {
-        // println(diskArr[i].map {if (it) 1 else 0}.joinToString(separator=""))
         for (j in diskArr[i].indices) {
             if (diskArr[i][j]) {
                 usedList.add(Pair(i, j))
