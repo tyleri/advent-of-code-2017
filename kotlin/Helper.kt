@@ -66,16 +66,14 @@ class UnionFind<T>(elements: Iterable<T>) {
     val mapping = mutableMapOf( *elements.map {Pair(it, it)}.toTypedArray() )
 
     fun find(element: T) : T {
-        var curr = element
+        val parent = mapping.get(element) ?: throw IllegalArgumentException("Invalid mapping for $element")
 
-        while (true) {
-            val parent = mapping.get(curr) ?: throw IllegalArgumentException("Invalid mapping for $curr")
-
-            if (curr == parent) {
-                return curr
-            } else {
-                curr = parent
-            }
+        if (element == parent) {
+            return element
+        } else {
+            val rootParent = find(parent)
+            mapping.put(element, rootParent)
+            return rootParent
         }
     }
 
