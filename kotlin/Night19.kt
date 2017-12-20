@@ -30,37 +30,29 @@ interface Dir {
     val left: Dir
     val right: Dir
 }
-class Up : Dir {
+object Up : Dir {
     override val x: Int = 0
     override val y: Int = -1
-    override val left: Dir
-        get() = Left()
-    override val right: Dir
-        get() = Right()
+    override val left: Dir = Left
+    override val right: Dir = Right
 }
-class Down : Dir {
+object Down : Dir {
     override val x: Int = 0
     override val y: Int = 1
-    override val left: Dir
-        get() = Right()
-    override val right: Dir
-        get() = Left()
+    override val left: Dir = Right
+    override val right: Dir = Left
 }
-class Left : Dir {
+object Left : Dir {
     override val x: Int = -1
     override val y: Int = 0
-    override val left: Dir
-        get() = Down()
-    override val right: Dir
-        get() = Up()
+    override val left: Dir = Down
+    override val right: Dir = Up
 }
-class Right : Dir {
+object Right : Dir {
     override val x: Int = 1
     override val y: Int = 0
-    override val left: Dir
-        get() = Up()
-    override val right: Dir
-        get() = Down()
+    override val left: Dir = Up
+    override val right: Dir = Down
 }
 
 fun parseSpace(char: Char) : Space {
@@ -77,7 +69,7 @@ fun parseSpace(char: Char) : Space {
 fun part1(input: List<String>) : String {
     val pathMap = input.map { it.map(::parseSpace) }
 
-    tailrec fun move(x: Int, y: Int, facing: Dir = Down(), acc: String = "") : String {
+    tailrec fun move(x: Int, y: Int, facing: Dir = Down, acc: String = "") : String {
         val currSpace = pathMap.getOrNull(y)?.getOrNull(x) ?: Empty
 
         return when (currSpace) {
