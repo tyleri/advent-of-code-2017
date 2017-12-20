@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     }
 
     println("Part 1: ${part1(input)}")
-    // println("Part 2: ${part2(input)}")
+    println("Part 2: ${part2(input)}")
 }
 
 sealed class Space
@@ -89,6 +89,39 @@ fun part1(input: List<String>) : String {
                     move(x + facing.right.x, y + facing.right.y, facing.right, acc)
                 } else {
                     acc
+                }
+            }
+        }
+    }
+
+    val startX = pathMap[0].indexOf(UpDown)
+
+    return move(startX, 0)
+}
+
+fun part2(input: List<String>) : Int {
+    val pathMap = input.map { it.map(::parseSpace) }
+
+    tailrec fun move(x: Int, y: Int, facing: Dir = Down, acc: Int = 0) : Int {
+        val currSpace = pathMap.getOrNull(y)?.getOrNull(x) ?: Empty
+
+        return when (currSpace) {
+            is Empty -> acc
+            is Letter -> move(x + facing.x, y + facing.y, facing, acc + 1)
+            is UpDown, is LeftRight -> move(x + facing.x, y + facing.y, facing, acc + 1)
+            is Intersection -> {
+                val nextSpace = pathMap.getOrNull(y + facing.y)?.getOrNull(x + facing.x) ?: Empty
+                val leftSpace = pathMap.getOrNull(y + facing.left.y)?.getOrNull(x + facing.left.x) ?: Empty
+                val rightSpace = pathMap.getOrNull(y + facing.right.y)?.getOrNull(x + facing.right.x) ?: Empty
+
+                if (nextSpace !is Empty) {
+                    move(x + facing.x, y + facing.y, facing, acc + 1)
+                } else if (leftSpace !is Empty) {
+                    move(x + facing.left.x, y + facing.left.y, facing.left, acc + 1)
+                } else if (rightSpace !is Empty) {
+                    move(x + facing.right.x, y + facing.right.y, facing.right, acc + 1)
+                } else {
+                    acc + 1
                 }
             }
         }
