@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     }
 
     println("Part 1: ${part1(input)}")
-    // println("Part 2: ${part2(input)}")
+    println("Part 2: ${part2(input)}")
 }
 
 class Particle(
@@ -77,13 +77,30 @@ fun part1(input: List<String>) : Int {
     return currClosest
 }
 
+fun removeDuplicates(input: List<Particle>) : List<Particle> {
+    val mapping = mutableMapOf<Triple<Int, Int, Int>, MutableList<Particle>>()
+
+    input.forEach {
+        if (it.p in mapping) {
+            mapping.get(it.p)?.add(it)
+        } else {
+            mapping.put(it.p, mutableListOf(it))
+        }
+    }
+
+    return mapping.values.fold(
+        listOf<Particle>(),
+        { acc, elt -> if (elt.size == 1) acc.plus(elt) else acc }
+    )
+}
+
 fun part2(input: List<String>) : Int {
     var particles = input.map(::parseParticle)
     var currClosest = closestParticleIdx(particles)
 
     while (true) {
         (1..50).forEach {
-            particles = particles.map {it.tick()}
+            particles = particles.map {it.tick()}.let(::removeDuplicates)
         }
 
         val newClosest = closestParticleIdx(particles)
@@ -94,5 +111,5 @@ fun part2(input: List<String>) : Int {
         currClosest = newClosest
     }
 
-    return currClosest
+    return particles.size
 }
